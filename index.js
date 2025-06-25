@@ -1,0 +1,28 @@
+const express = require("express");
+const dotenv = require("dotenv");
+const sequelize = require("./utils/db");
+const app = express();
+dotenv.config();
+
+const authRoutes = require("./routes/auth-routes");
+
+app.use(express.json());
+app.use(authRoutes);
+
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connection established.");
+
+    await sequelize.sync();
+    console.log("Database synced.");
+    
+    app.listen(process.env.PORT, () => {
+      console.log(`Server running on port ${process.env.PORT}`);
+    });
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+};
+
+startServer();
