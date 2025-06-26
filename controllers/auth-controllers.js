@@ -1,5 +1,9 @@
 const bcryptjs = require("bcryptjs");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const getHome = (req, res) => {
   res.status(200).json({
@@ -8,7 +12,7 @@ const getHome = (req, res) => {
   });
 };
 
-const registerUser = async (req, res) => {
+const registerHandler = async (req, res) => {
   const { firstName, lastName, email, phone, password } = req.body;
   let role = req.body.role;
 
@@ -44,4 +48,29 @@ const registerUser = async (req, res) => {
   }
 };
 
-module.exports = { getHome, registerUser };
+const loginHandler = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ where: { email: email } });
+  if (!user) {
+    res.json({ error: "Invalid email or password" });
+    return
+  }
+  const isPasswordCorrect = await bcryptjs.compare(password, user.password);
+  if (!isPasswordCorrect) {
+    res.json({ error: "Invalid email or password" });
+    return
+  }
+
+  const payload = {
+    id: user.id,
+    name: user.firstname,
+    email: user.email,
+    role: user.role,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+  res.json({ message: "Login was successful.", token: token });
+};
+
+module.exports = { getHome, registerHandler, loginHandler };
