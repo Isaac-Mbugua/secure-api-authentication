@@ -53,12 +53,12 @@ const loginHandler = async (req, res) => {
   const user = await User.findOne({ where: { email: email } });
   if (!user) {
     res.json({ error: "Invalid email or password" });
-    return
+    return;
   }
   const isPasswordCorrect = await bcryptjs.compare(password, user.password);
   if (!isPasswordCorrect) {
     res.json({ error: "Invalid email or password" });
-    return
+    return;
   }
 
   const payload = {

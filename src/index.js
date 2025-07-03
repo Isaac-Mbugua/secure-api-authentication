@@ -5,9 +5,11 @@ const app = express();
 dotenv.config();
 
 const authRoutes = require("./routes/auth-routes");
+const userRoutes = require("./routes/user-routes");
 
 app.use(express.json());
 app.use(authRoutes);
+app.use(userRoutes);
 
 const startServer = async () => {
   try {
@@ -16,7 +18,7 @@ const startServer = async () => {
 
     await sequelize.sync();
     console.log("Database synced.");
-    
+
     app.listen(process.env.PORT, () => {
       console.log(`Server running on port ${process.env.PORT}`);
     });
