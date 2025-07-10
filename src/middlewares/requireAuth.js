@@ -10,7 +10,9 @@ const requireAuth = (allowedRoles = []) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "No authentication token provided" });
+      return res
+        .status(401)
+        .json({ message: "No authentication token provided" });
     }
 
     const token = authHeader.split(" ")[1];
@@ -23,17 +25,19 @@ const requireAuth = (allowedRoles = []) => {
         allowedRoles.length &&
         (!decoded.role || !allowedRoles.includes(decoded.role))
       ) {
-        return res.status(403).json({ error: "Forbidden: insufficient role" });
+        return res.status(403).json({ message: "Unauthorized access." });
       }
 
       next();
     } catch (err) {
       if (err.name === "TokenExpiredError") {
-        return res.status(401).json({ error: "Token expired" });
+        return res.status(401).json({
+          message: "Authorization token expired login and try again",
+        });
       } else if (err.name === "JsonWebTokenError") {
-        return res.status(401).json({ error: "Invalid token" });
+        return res.status(401).json({ message: "Invalid authorization token" });
       }
-      return res.status(401).json({ error: "Authentication failed" });
+      return res.status(401).json({ message: "Authentication failed" });
     }
   };
 };
