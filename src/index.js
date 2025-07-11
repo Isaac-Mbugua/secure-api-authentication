@@ -7,8 +7,18 @@ dotenv.config();
 const authRoutes = require("./routes/auth-routes");
 const userRoutes = require("./routes/user-routes");
 
+const allowedOrigins = [
+  "http://localhost:4200",
+  "https://secure-api-ui.vercel.app",
+];
+
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
@@ -18,6 +28,7 @@ app.use((req, res, next) => {
 
   next();
 });
+
 app.use(express.json());
 app.use(authRoutes);
 app.use(userRoutes);
