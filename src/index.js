@@ -6,6 +6,7 @@ dotenv.config();
 
 const authRoutes = require("./routes/auth-routes");
 const userRoutes = require("./routes/user-routes");
+const swaggerDocs = require("./swagger");
 
 const allowedOrigins = [
   "http://localhost:4200",
@@ -49,4 +50,5 @@ const startServer = async () => {
   }
 };
 
+swaggerDocs(app);
 startServer();

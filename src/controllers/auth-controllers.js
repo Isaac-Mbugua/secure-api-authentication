@@ -7,8 +7,8 @@ dotenv.config();
 
 const getHome = (req, res) => {
   res.status(200).json({
-    message: "This is the new API",
-    creator: "Benard Kariuki",
+    message: "This is the secure authentication API",
+    creator: "Mbugua Isaac",
   });
 };
 
