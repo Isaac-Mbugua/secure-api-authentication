@@ -6,9 +6,9 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Auth & User API",
+      title: "Secure API Authentication",
       version: "1.0.0",
-      description: "API documentation for authentication and user management",
+      description: "API documentation for `SECURE API AUTHENTICATION`",
     },
     components: {
       securitySchemes: {
