@@ -7,12 +7,20 @@ dotenv.config();
 const authRoutes = require("./routes/auth-routes");
 const userRoutes = require("./routes/user-routes");
 const swaggerDocs = require("./swagger");
+const rateLimit = require("express-rate-limit");
 
 const allowedOrigins = [
   "http://localhost:4200",
   "https://secure-api-ui.vercel.app",
 ];
 
+const limit = rateLimit({
+  window: 60 * 1000,
+  limit: 100,
+  message: { error: "Too many requests, please try again later." },
+});
+
+app.use(limit);
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
