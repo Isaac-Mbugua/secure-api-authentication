@@ -2,6 +2,10 @@ const bcryptjs = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const {
+  calculateRisk,
+  mapRiskToExpiry,
+} = require("../middlewares/calculateRisk");
 
 dotenv.config();
 
@@ -76,8 +80,11 @@ const loginHandler = async (req, res) => {
       role: user.role,
     };
 
+    const risk = calculateRisk(req);
+    const expiry = mapRiskToExpiry(risk);
+
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: expiry,
     });
 
     return res.status(200).json({
