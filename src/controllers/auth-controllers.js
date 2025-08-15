@@ -38,6 +38,7 @@ const registerHandler = async (req, res) => {
       phone,
       password: encryptedPassword,
       role: role || "user",
+      authCode: null,
     });
 
     const { password: _, ...safeUser } = createdUser.dataValues;
@@ -68,6 +69,13 @@ const loginHandler = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
+    if (user.authCode) {
+      return res.status(403).json({
+        message:
+          "Authenticate your account before logging in. Check your email for authentication code.",
+      });
+    }
+
     const isPasswordCorrect = await bcryptjs.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res.status(401).json({ message: "Invalid email or password." });
@@ -89,7 +97,7 @@ const loginHandler = async (req, res) => {
 
     return res.status(200).json({
       message: "Login was successful.",
-      token,
+      token: token,
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -97,4 +105,33 @@ const loginHandler = async (req, res) => {
   }
 };
 
-module.exports = { getHome, registerHandler, loginHandler };
+const otpVerificationHandler = async (req, res) => {
+  const { otp } = req.body;
+
+  if (!otp) {
+    return res.status(400).json({ message: "OTP is required." });
+  }
+
+  try {
+    const user = await User.findOne({ where: { authCode: otp } });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid OTP." });
+    }
+
+    await User.update({ authCode: null }, { where: { email: user.email } });
+    return res
+      .status(200)
+      .json({ message: "Authentication successful, proceed to login." });
+  } catch (error) {
+    console.error("Authentication error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = {
+  getHome,
+  registerHandler,
+  loginHandler,
+  otpVerificationHandler,
+};

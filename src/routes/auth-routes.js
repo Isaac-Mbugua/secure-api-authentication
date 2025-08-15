@@ -75,9 +75,31 @@ const authController = require("../controllers/auth-controllers");
  *       200:
  *         description: Login successful
  */
+/**
+ * @swagger
+ * /api/verify-otp:
+ *   post:
+ *     summary: OTP verification
+ *     description: Verify with authentication code (OTP).
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - otp
+ *             properties:
+ *               otp:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Authentication successful, proceed to login.
+ */
 
 router.get("/", authController.getHome);
 router.post("/api/register", authController.registerHandler);
 router.post("/api/login", authController.loginHandler);
+router.post("/api/verify-otp", authController.otpVerificationHandler);
 
 module.exports = router;

@@ -29,6 +29,10 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    authCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   { sequelize, modelName: "User", tableName: "users", timestamps: true }
 );
